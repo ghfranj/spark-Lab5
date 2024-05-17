@@ -10,28 +10,25 @@ mySpark = MySpark('config.ini')
 spark = mySpark.get_spark_session()
 # Read the data
 data_path = "E:/Downloads/en.openfoodfacts.org.products.csv/en.openfoodfacts.org.products.csv"
-df = preprocess_data(spark, data_path)
 
-# Train KMeans model
-kmeans = KMeans().setK(5).setSeed(1)
-model = kmeans.fit(df)
+if __name__ == '__main__':
+    df = preprocess_data(spark, data_path)
 
-# Make predictions
-predictions = model.transform(df)
-evaluator = ClusteringEvaluator()
+    # Train KMeans model
+    kmeans = KMeans().setK(5).setSeed(1)
+    model = kmeans.fit(df)
 
-wssse = evaluator.evaluate(predictions)
+    # Make predictions
+    predictions = model.transform(df)
+    evaluator = ClusteringEvaluator()
 
-print("Within Set Sum of Squared Errors = " + str(wssse))
-# Show the result
-centers = model.clusterCenters()
-print("Cluster Centers:")
-for center in centers:
-    print(center)
+    wssse = evaluator.evaluate(predictions)
 
-# Save the model
-# model_path = "kmeans_model"
-# model.write().save(model_path)
-
-# Stop SparkSession
-spark.stop()
+    print("Within Set Sum of Squared Errors = " + str(wssse))
+    # Show the result
+    centers = model.clusterCenters()
+    print("Cluster Centers:")
+    for center in centers:
+        print(center)
+    # Stop SparkSession
+    spark.stop()
